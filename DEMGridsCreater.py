@@ -109,20 +109,6 @@ def createPolygonFeatureClass(featureName, featureData, featureFieldList, featur
 	arcpy.Delete_management(featureNameNAD83Path, "FeatureClass")
 	print "Finish " + featureName + " feature class."
 
-INPUT_PATH = "input"
-OUTPUT_PATH = "output"
-if arcpy.Exists(OUTPUT_PATH + "\\DEMGrids.gdb"):
-	os.system("rmdir " + OUTPUT_PATH + "\\DEMGrids.gdb /s /q")
-os.system("del " + OUTPUT_PATH + "\\*DEMGrids*.*")
-arcpy.CreateFileGDB_management(OUTPUT_PATH, "DEMGrids", "9.3")
-arcpy.env.workspace = OUTPUT_PATH + "\\DEMGrids.gdb"
-
-inputFile = open('input/index.html')
-input = inputFile.read()
-htmlSnippets = input.split('<TR>')
-del htmlSnippets[0]
-del htmlSnippets[0]
-
 def createPolygon(htmlSnippet):
 	items = htmlSnippet.split('<TD VALIGN="TOP" class="style1"  >')
 	del items[0]
@@ -154,6 +140,20 @@ def createPolygon(htmlSnippet):
 	ary.add(pnt)
 	polygon = arcpy.Polygon(ary)
 	return [polygon, tile, city, str(zone)]
+
+INPUT_PATH = "input"
+OUTPUT_PATH = "output"
+if arcpy.Exists(OUTPUT_PATH + "\\DEMGrids.gdb"):
+	os.system("rmdir " + OUTPUT_PATH + "\\DEMGrids.gdb /s /q")
+os.system("del " + OUTPUT_PATH + "\\*DEMGrids*.*")
+arcpy.CreateFileGDB_management(OUTPUT_PATH, "DEMGrids", "9.3")
+arcpy.env.workspace = OUTPUT_PATH + "\\DEMGrids.gdb"
+
+inputFile = open('input/index.html')
+input = inputFile.read()
+htmlSnippets = input.split('<TR>')
+del htmlSnippets[0]
+del htmlSnippets[0]
 featureData = map(createPolygon, htmlSnippets)
 featureName = "DEMGrids"
 featureFieldList = [["TILE", "TEXT", "", "", "", "", "NON_NULLABLE", "NON_REQUIRED", ""], ["CITY", "TEXT", "", "", "", "", "NON_NULLABLE", "NON_REQUIRED", ""], ["UTMZONE", "TEXT", "", "", "", "", "NON_NULLABLE", "NON_REQUIRED", ""]]
